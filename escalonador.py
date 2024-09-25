@@ -165,7 +165,7 @@ def sistema():
         processos = criar_lista_BCP(prioridades, nome, instrucoes)
         escalonador = Escalonador(processos, quantum, log)
         escalonador.escalona()
-        escalonador.salvar_log(f"log{quantum:02}.txt")"""
+        escalonador.salvar_log(f"log{quantum:02}quanta.txt")"""
 
 if __name__ == "__main__":
     sistema()
