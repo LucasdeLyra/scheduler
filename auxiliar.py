@@ -13,24 +13,39 @@ def le_prioridades(pasta):
     return prioridades
 
 def le_processos(diretorio_programas):
+    log = []
     nomes = [ ]
     processos = []
 
     arquivos = os.listdir(diretorio_programas)
     arquivos.remove('prioridades.txt')
     arquivos.remove('quantum.txt')
-    for arquivo in arquivos:
+    
+    prioridades = le_prioridades(diretorio_programas)
+    arquivos_com_prioridade = [[prioridade,arquivo] for prioridade, arquivo in zip(prioridades,arquivos)]
+    
+    arquivos_ordenados_por_prioridade = list(sorted(arquivos_com_prioridade, key=lambda x: -x[0]))
+    
+    
+
+    for arquivo in arquivos_ordenados_por_prioridade:
+        arquivo = arquivo[1]
         with open(rf"{diretorio_programas}/{arquivo}") as f:
             instrucoes = []
             for i, info in enumerate(f):
                 if i != 0:
                     instrucoes.append(info.strip())
                 else:
-                    nomes.append(info.strip())
+                    nome = info.strip()
+                    nomes.append(nome)
+                    log.append(f"Carregando {nome}")
             processos.append(instrucoes)
-    return nomes, processos
+    return nomes, processos, log
 
 
+
+#O QuickSort não foi feito por mim.
+#FONTE: https://panda.ime.usp.br/panda/static/pythonds_pt/05-OrdenacaoBusca/OQuickSort.html
 def quickSort(alist):
     quickSortHelper(alist,0,len(alist)-1)
     return alist[::-1]

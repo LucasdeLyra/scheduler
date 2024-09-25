@@ -16,7 +16,7 @@ class BCP:
         self.nome = nome
         # Os atributos acima foram descritas no trabalho. Adicionei o atributo creditos para facilitar na contagem de créditos do escalonador.
         self.creditos = prioridade  # "1. Inicialmente, distribua um número de créditos, a cada processo, igual à sua prioridade"
-        self.numero = int(self.nome.split('-')[1])
+        self.numero = int(self.nome.split('-')[1]) # Só é utilizada para fazer a métrica de troca de contexto no escalonador.
         
         
 
@@ -24,12 +24,12 @@ class BCP:
 
 # Escalonador de processos
 class Escalonador:
-    def __init__(self, processos, quantum):
+    def __init__(self, processos, quantum, log):
         self.quantum = quantum
         
         self.fila_prontos = auxiliar.quickSort(processos)  # "2. Ordene, então, a fila de processos prontos, conforme o número de créditos"
         self.fila_bloqueados = [] # "Assim, sua implementação deve contemplar uma lista de processos PRONTOS(acima) e outra de BLOQUEADOS."
-        self.log = []  # Log das operações
+        self.log = log  # Log das operações
         self.tabela_de_procesos = [processo.nome for processo in self.fila_prontos]
         
         self.trocas_de_contexto = [0]*10
@@ -144,25 +144,28 @@ def criar_lista_BCP(prioridades, nome, instrucoes):
         lista_BCP.append(bloco)
     return lista_BCP
 
-# Função principal para iniciar o escalonador
-def main():
+# Função main. Executa a leitura de arquivos e chama o escalonador 
+def sistema():
 
     pasta = r'C:\Users\Cliente\Desktop\EP1\programas'
+    
     prioridades = auxiliar.le_prioridades(pasta)
-    processos = criar_lista_BCP(prioridades, *auxiliar.le_processos(pasta))
+    nome, instrucoes, log = auxiliar.le_processos(pasta)
+    processos = criar_lista_BCP(prioridades, nome, instrucoes)
     quantum = auxiliar.le_quantum(pasta)
-    escalonador = Escalonador(processos, quantum)
+    escalonador = Escalonador(processos, quantum, log)
     escalonador.escalona()
     escalonador.salvar_log(f"log{quantum:02}.txt")
     
-    """
+    
     #Usei este loop abaixo para gerar o log dos 21 possíveis quanta automaticamente
-    for quantum in range(1,22):
+    """for quantum in range(1,22):
         prioridades = auxiliar.le_prioridades(pasta)
-        processos = criar_lista_BCP(prioridades, *auxiliar.le_processos(pasta))
-        escalonador = Escalonador(processos, quantum)
+        nome, instrucoes, log = auxiliar.le_processos(pasta)
+        processos = criar_lista_BCP(prioridades, nome, instrucoes)
+        escalonador = Escalonador(processos, quantum, log)
         escalonador.escalona()
         escalonador.salvar_log(f"log{quantum:02}.txt")"""
 
 if __name__ == "__main__":
-    main()
+    sistema()
